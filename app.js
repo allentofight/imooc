@@ -1,23 +1,36 @@
 var express = require('express')
 var path = require('path')
 var mongoose = require('mongoose')
+var mongoStore = require('connect-mongo')(express)
 var Movie = require('./models/movie')
+var User = require('./models/user')
 var bodyParser = require('body-parser')
 var _ = require('underscore')
 var port = process.env.PORT || 3000
 var app = express()
 
-mongoose.connect('mongodb://localhost/imooc')
+var dbUrl = 'mongodb://localhost/imooc'
+mongoose.connect(dbUrl)
 
 app.set('views', './views/pages')
 app.set('view engine', 'jade')
 app.use(bodyParser())
+app.use(express.cookieParser())
+app.use(express.session({
+    secret: 'imooc',
+    store: new mongoStore({
+        url: dbUrl,
+        collection: 'sessions'
+    })
+}))
 app.use(express.static(path.join(__dirname, 'public')))
 app.locals.moment = require('moment')
 app.listen(port)
 console.log('imooc started on port ' + port)
 
 app.get('/', function(req, res) {
+    console.log('user in session:')
+    console.log(req.session.user)
     Movie.fetch(function(err, movies) {
         if (err) {
             console.log(err)
@@ -29,6 +42,77 @@ app.get('/', function(req, res) {
     })
 })
 
+app.post('/user/signup', function(req, res) {
+    var _user = req.body.user
+
+    User.find({
+        name: _user.name
+    }, function(err, user) {
+        if (err) {
+            console.log(err)
+        }
+
+        if (user) {
+            return res.redirect('/')
+        } else {
+            var user = new User(_user)
+            user.save(function(err, user) {
+                if (err) {
+                    console.log(err)
+                }
+                res.redirect('/admin/userlist')
+                console.log(user)
+            })
+        }
+    })
+})
+
+//signin
+app.post('/user/signin', function(req, res) {
+    var _user = req.body.user
+    var name = _user.name
+    var password = _user.password
+
+    User.findOne({
+        name: name
+    }, function(err, user) {
+        if (err) {
+            console.log(err)
+        }
+        if (!user) {
+            return res.redirect('/')
+        }
+
+        user.comparePassword(password, function(err, isMatch) {
+            if (err) {
+                console.log(err)
+            }
+
+            if (isMatch) {
+                req.session.user = user
+
+                return res.redirect('/')
+            } else {
+                console.log('Password is not matched')
+            }
+        })
+    })
+})
+
+app.get('/admin/userlist', function(req, res) {
+    User.fetch(function(err, users) {
+        if (err) {
+            console.log(err)
+        }
+        res.render('userlist', {
+            title: 'imooc 用户列表页',
+            users: users
+        })
+    })
+})
+
+
+//detail page
 app.get('/movie/:id', function(req, res) {
     var id = req.params.id
 

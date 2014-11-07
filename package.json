@@ -4,11 +4,13 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "bcrypt": "^0.8.0",
+    "body-parser": "*",
+    "connect-mongo": "^0.4.1",
     "express": "3.x",
     "jade": "*",
     "moment": "*",
-    "mongoose": "*",
-    "body-parser": "*"
+    "mongoose": "*"
   },
   "main": "app.js",
   "devDependencies": {
