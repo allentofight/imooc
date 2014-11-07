@@ -22,6 +22,13 @@ app.use(express.session({
     })
 }))
 
+if ('development' == app.get('env')) {
+    app.set('showStackError', true)
+    app.use(express.logger(':method :url :status'))
+    app.locals.pretty = true
+    mongoose.set('debug', 'true')
+}
+
 require('./config/routes')(app)
 
 app.listen(port)
