@@ -28,17 +28,21 @@ app.locals.moment = require('moment')
 app.listen(port)
 console.log('imooc started on port ' + port)
 
-app.get('/', function(req, res) {
-    console.log('user in session:')
-    console.log(req.session.user)
+// pre handle user
 
+app.use(function(req, res, next) {
     var _user = req.session.user
 
     if (_user) {
         //渲染页面时会传入此参数
         app.locals.user = _user
     }
+    return next()
+})
 
+app.get('/', function(req, res) {
+    console.log('user in session:')
+    console.log(req.session.user)
 
     Movie.fetch(function(err, movies) {
         if (err) {
