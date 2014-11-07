@@ -31,6 +31,15 @@ console.log('imooc started on port ' + port)
 app.get('/', function(req, res) {
     console.log('user in session:')
     console.log(req.session.user)
+
+    var _user = req.session.user
+
+    if (_user) {
+        //渲染页面时会传入此参数
+        app.locals.user = _user
+    }
+
+
     Movie.fetch(function(err, movies) {
         if (err) {
             console.log(err)
@@ -97,6 +106,12 @@ app.post('/user/signin', function(req, res) {
             }
         })
     })
+})
+
+app.get('/logout', function(req, res) {
+    delete req.session.user
+
+    res.redirect('/')
 })
 
 app.get('/admin/userlist', function(req, res) {
