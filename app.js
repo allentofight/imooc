@@ -110,7 +110,7 @@ app.post('/user/signin', function(req, res) {
 
 app.get('/logout', function(req, res) {
     delete req.session.user
-
+    delete app.locals.user
     res.redirect('/')
 })
 
