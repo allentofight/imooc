@@ -10,7 +10,7 @@ var app = express()
 var dbUrl = 'mongodb://localhost/imooc'
 mongoose.connect(dbUrl)
 
-app.set('views', './views/pages')
+app.set('views', './app/views/pages')
 app.set('view engine', 'jade')
 app.use(bodyParser())
 app.use(express.cookieParser())
@@ -25,6 +25,7 @@ app.use(express.session({
 if ('development' == app.get('env')) {
     app.set('showStackError', true)
     app.use(express.logger(':method :url :status'))
+    //之前的源码html源码是压缩过的，这么设置后，是无压缩过的，可读性好
     app.locals.pretty = true
     mongoose.set('debug', 'true')
 }
