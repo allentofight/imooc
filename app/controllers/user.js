@@ -1,5 +1,20 @@
 var User = require('../models/user')
 
+// userlist page
+exports.showSignup = function(req, res) {
+
+    res.render('signup', {
+        title: '注册页面'
+    })
+}
+
+exports.showSignin = function(req, res) {
+
+    res.render('signin', {
+        title: '登录页面'
+    })
+}
+
 exports.signup = function(req, res) {
     var _user = req.body.user
 
@@ -11,14 +26,14 @@ exports.signup = function(req, res) {
         }
 
         if (user) {
-            return res.redirect('/')
+            return res.redirect('/signin')
         } else {
             var user = new User(_user)
             user.save(function(err, user) {
                 if (err) {
                     console.log(err)
                 }
-                res.redirect('/admin/userlist')
+                res.redirect('/')
                 console.log(user)
             })
         }
@@ -38,7 +53,7 @@ exports.signin = function(req, res) {
             console.log(err)
         }
         if (!user) {
-            return res.redirect('/')
+            return res.redirect('/signup')
         }
 
         user.comparePassword(password, function(err, isMatch) {
@@ -51,7 +66,7 @@ exports.signin = function(req, res) {
 
                 return res.redirect('/')
             } else {
-                console.log('Password is not matched')
+                return res.redirect('/signin')
             }
         })
     })
@@ -74,4 +89,26 @@ exports.list = function(req, res) {
             users: users
         })
     })
+}
+
+//midware for user 
+exports.signinRequired = function(req, res, next) {
+    var user = req.session.user
+
+    if (!user) {
+        return res.redirect('/signin')
+    }
+
+    next()
+}
+
+//midware for user 
+exports.adminRequired = function(req, res, next) {
+    var user = req.session.user
+
+    if (user.role <= 10) {
+        return res.redirect('/signin')
+    }
+
+    next()
 }
