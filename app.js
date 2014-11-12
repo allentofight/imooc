@@ -3,8 +3,9 @@ var path = require('path')
 var mongoose = require('mongoose')
 var mongoStore = require('connect-mongo')(express)
 var bodyParser = require('body-parser')
+// var busboy = require('connect-busboy');
 
-var port = process.env.PORT || 3000
+var port = process.env.PORT || 80
 var app = express()
 
 var dbUrl = 'mongodb://localhost/imooc'
@@ -14,6 +15,9 @@ app.set('views', './app/views/pages')
 app.set('view engine', 'jade')
 app.use(bodyParser())
 app.use(express.cookieParser())
+// app.use(express.methodOverride())
+app.use(express.multipart())
+// app.use(busboy())
 app.use(express.session({
     secret: 'imooc',
     store: new mongoStore({

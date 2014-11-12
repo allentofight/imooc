@@ -6,6 +6,7 @@
   "dependencies": {
     "bcrypt": "^0.8.0",
     "body-parser": "*",
+    "connect-busboy": "0.0.2",
     "connect-mongo": "^0.4.1",
     "express": "3.x",
     "jade": "*",
