@@ -9,7 +9,9 @@
     "connect-busboy": "0.0.2",
     "connect-mongo": "^0.4.1",
     "express": "3.x",
+    "grunt-mocha-test": "^0.12.2",
     "jade": "*",
+    "mocha": "^2.0.1",
     "moment": "*",
     "mongoose": "*"
   },
